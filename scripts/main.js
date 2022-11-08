@@ -29,3 +29,35 @@ function insertName(){
 }
 insertName();
 
+function populateCardsDynamically() {
+    let cardTemplate = document.getElementById("featureCardtemplate");
+    let cardGroup = document.getElementById("features-go-here");
+    
+    db.collection("features").get()
+        .then(allFeatures => {
+            allFeatures.forEach(doc => {
+                // var hikeName = doc.data().name; //gets the name field
+                // var hikeID = doc.data().code; //gets the unique ID field
+                // let testHikeCard = hikeCardTemplate.content.cloneNode(true);
+                
+                var title = doc.data().name;        // get value of the "name" key
+                var details = doc.data().details;   // get value of the "details" key
+                var featureID = doc.data().code;    //get unique ID to each hike to be used for fetching right image
+                let newcard = cardTemplate.content.cloneNode(true);
+
+                newcard.querySelector('.card-title').innerHTML = title;
+                newcard.querySelector('.card-text').innerHTML = details;
+                newcard.querySelector('.card-image').src = `./images/${featureID}.png`; //Example: NV01.jpg
+                newcard.querySelector('a').onclick = () => setFeatureData(featureID);//equiv getElementByTagName
+
+                // testHikeCard.querySelector('img').src = `./images/${hikeID}.jpg`;   //equiv getElementByTagName
+                cardGroup.appendChild(newcard);
+            })
+
+        })
+}
+populateCardsDynamically();
+
+function setFeatureData(id){
+    localStorage.setItem('featureID', id);
+}
